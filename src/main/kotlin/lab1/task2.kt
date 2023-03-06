@@ -1,5 +1,9 @@
 package lab1
 
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+
+
 class BinarySearchTree<K : Comparable<K>, V> {
     private data class Node<K, V>(var key: K, var value: V, var left: Node<K, V>? = null, var right: Node<K, V>? = null)
 
@@ -78,6 +82,76 @@ class BinarySearchTree<K : Comparable<K>, V> {
         traverseInOrder(node.left, action)
         action(node.key, node.value)
         traverseInOrder(node.right, action)
+    }
+}
+
+
+class BinarySearchTreeTest {
+    @Test
+    fun `insert and search`() {
+        val tree = BinarySearchTree<Int, String>()
+
+        tree.insert(4, "four")
+        tree.insert(2, "two")
+        tree.insert(1, "one")
+        tree.insert(3, "three")
+        tree.insert(6, "six")
+        tree.insert(5, "five")
+        tree.insert(7, "seven")
+
+        assertEquals("four", tree.search(4))
+        assertEquals("one", tree.search(1))
+        assertEquals("seven", tree.search(7))
+        assertNull(tree.search(0))
+        assertNull(tree.search(8))
+    }
+
+    @Test
+    fun `delete`() {
+        val tree = BinarySearchTree<Int, String>()
+
+        tree.insert(4, "four")
+        tree.insert(2, "two")
+        tree.insert(1, "one")
+        tree.insert(3, "three")
+        tree.insert(6, "six")
+        tree.insert(5, "five")
+        tree.insert(7, "seven")
+
+        tree.delete(4)
+        assertNull(tree.search(4))
+        assertEquals("one", tree.search(1))
+        assertEquals("seven", tree.search(7))
+
+        tree.delete(1)
+        assertNull(tree.search(1))
+        assertEquals("two", tree.search(2))
+        assertEquals("three", tree.search(3))
+
+        tree.delete(7)
+        assertNull(tree.search(7))
+        assertEquals("six", tree.search(6))
+        assertEquals("five", tree.search(5))
+    }
+
+    @Test
+    fun `traverseInOrder`() {
+        val tree = BinarySearchTree<Int, String>()
+
+        tree.insert(4, "four")
+        tree.insert(2, "two")
+        tree.insert(1, "one")
+        tree.insert(3, "three")
+        tree.insert(6, "six")
+        tree.insert(5, "five")
+        tree.insert(7, "seven")
+
+        val expected = listOf(1 to "one", 2 to "two", 3 to "three", 4 to "four", 5 to "five", 6 to "six", 7 to "seven")
+        val actual = mutableListOf<Pair<Int, String>>()
+        tree.traverseInOrder { key, value ->
+            actual.add(key to value)
+        }
+        assertEquals(expected, actual)
     }
 }
 
