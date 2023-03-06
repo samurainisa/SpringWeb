@@ -1,5 +1,8 @@
 package lab1
 
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+
 data class Contact(val name: String, val phoneNumber: String)
 class MobilePhone(private val myNumber: String) {
     private val myContacts = ArrayList<Contact>()
@@ -57,6 +60,63 @@ class MobilePhone(private val myNumber: String) {
         for (i in myContacts.indices) {
             println("${i + 1}. ${myContacts[i].name} -> ${myContacts[i].phoneNumber}")
         }
+    }
+}
+
+class MobilePhoneTest {
+    private val mobilePhone = MobilePhone("1234567890")
+
+    @Test
+    fun testAddNewContact() {
+        val contact1 = Contact("Андрей", "9876543210")
+        assertTrue(mobilePhone.addNewContact(contact1))
+
+        val contact2 = Contact("Никита", "8885554444")
+        assertTrue(mobilePhone.addNewContact(contact2))
+
+        assertFalse(mobilePhone.addNewContact(contact1))
+    }
+
+    @Test
+    fun testUpdateContact() {
+        val contact1 = Contact("Андрей", "9876543210")
+        mobilePhone.addNewContact(contact1)
+
+        val contact2 = Contact("Никита", "8885554444")
+        mobilePhone.addNewContact(contact2)
+
+        val updatedContact = Contact("Вася", "5556667777")
+        assertTrue(mobilePhone.updateContact(contact1, updatedContact))
+
+        assertFalse(mobilePhone.updateContact(Contact("Петька", "1112223333"), updatedContact))
+        assertFalse(mobilePhone.updateContact(contact2, updatedContact))
+    }
+
+    @Test
+    fun testRemoveContact() {
+        val contact1 = Contact("Андрей", "9876543210")
+        mobilePhone.addNewContact(
+            contact1
+        )
+        val contact2 = Contact("Никита", "8885554444")
+        mobilePhone.addNewContact(contact2)
+
+        assertTrue(mobilePhone.removeContact(contact1))
+        assertFalse(mobilePhone.removeContact(Contact("Петька", "1112223333")))
+        assertTrue(mobilePhone.removeContact(contact2))
+    }
+
+    @Test
+    fun testQueryContact() {
+        val contact1 = Contact("Андрей", "9876543210")
+        mobilePhone.addNewContact(contact1)
+
+        val contact2 = Contact("Никита", "8885554444")
+        mobilePhone.addNewContact(contact2)
+
+        assertEquals(contact1, mobilePhone.queryContact("Андрей"))
+        assertEquals(contact2, mobilePhone.queryContact("Никита"))
+        assertNull(mobilePhone.queryContact("Петька"))
     }
 }
 
